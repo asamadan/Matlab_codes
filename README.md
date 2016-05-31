@@ -9,16 +9,12 @@ based on maximum-likelihood classification.
 %               https://www.cs.ubc.ca/~murphyk/Software/HMM/hmm.html
 
 % to train HMMs (EM algorithm) and exectue maximum likelihood
-
 % classification (forward algorithm)
 
 % Here, the implementation of HMM classification is meant for continuous
-
-% observations e.g., physical  activities (human movements), or physiological
-
-% activities (e.g., gesture-specific forearm EMG signals)
-
-% this classification code (fully or partially) has been used in: 
+observations e.g., physical  activities (human movements), or physiological
+activities (e.g., gesture-specific forearm EMG signals)
+this classification code (fully or partially) has been used in: 
 
 [1] A. Samadani, R. Gorbet and D. Kulić, Affective Movement Recognition based on Generative and Discriminative Stochastic Dynamic Models, IEEE Transactions on Human-Machine Systems, vol. 44, no. 4, pp. 454 – 467, 2014.
 
