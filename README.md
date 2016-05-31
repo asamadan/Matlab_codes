@@ -5,12 +5,17 @@ This repository contains a collection of matlab codes to train and test/validate
 based on maximum-likelihood classification. 
 
 % This function require Kevin Murphy's MATLAB HMM package:
+
 %               https://www.cs.ubc.ca/~murphyk/Software/HMM/hmm.html
+
 % to train HMMs (EM algorithm) and exectue maximum likelihood
+
 % classification (forward algorithm)
 
 % Here, the implementation of HMM classification is meant for continuous
+
 % observations e.g., physical  activities (human movements), or physiological
+
 % activities (e.g., gesture-specific forearm EMG signals)
 
 % this classification code (fully or partially) has been used in: 
