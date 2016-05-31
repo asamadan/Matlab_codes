@@ -107,7 +107,7 @@ for ii = 1:CV.runs % CVruns
 
         parfor state =s
             
-            [Model{state-1}] = cellfun(@(x,y) HMMTrainEMGLRMarcela(x(y), state, m,e, Transition), Data, trainind,'un',0); 
+            [Model{state-1}] = cellfun(@(x,y) HMMTrain(x(y), state, m,e, Transition), Data, trainind,'un',0); 
             
         end
         
