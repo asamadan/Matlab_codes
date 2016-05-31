@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-# Matlab_codes
-This repository contains codes from my PhD and Postdoc that deal with exploratory and inferential analysis of physiological signals and in general, the application of machine learning for physiological signal processing and discriminative analysis.
-Tags: Machine learning, Exploratory and inferential physiological signal processing
-=======
+
 # HMM-Classification
 HMM training, testing | HMM/maximum likelihood classification
 
@@ -26,5 +22,3 @@ this classification code (fully or partially) has been used in:
 [2] A. Samadani and D. Kulić, sEMG-based Hand Gesture Recognition,	36th IEEE Engineering in Medicine and Biology Conference, pp. 4196 - 4199, 2014.
 
 
-
->>>>>>> 06b6649dbe12ca2bf09d6de90afd9b014dd9c62d
