@@ -134,7 +134,7 @@ for ii = 1:CV.runs % CVruns
         Test = [Test{:}];
         
         % Max-Liklihood Classification
-        % 4-class
+        % K-class classification
         [FTest]  = cell2mat(arrayfun(@(x) mhmm_logprob2(cellfun(@transpose, Test, 'Un', 0), MODEL{x}.prior, MODEL{x}.trans, ...
             MODEL{x}.mu, MODEL{x}.Sigma, MODEL{x}.obsmat), 1:length(MODEL),'Un', 0));
         [~, ClassHMMTest] = max(FTest,[],2);
@@ -147,7 +147,7 @@ for ii = 1:CV.runs % CVruns
         TestBinary = [TestBinary{:}];
         
         % Get the binary classification from the maximum liklihood
-        % results for 4 class (FTest): ClassBinary
+        % results for K class (FTest): ClassBinary
         [~,ClassBinary] = arrayfun(@(x) arrayfun(@(y) max(FTest(setxor(sum(Len(1:x-1))+(1:Len(x)), ...
                           sum(Len(1:y-1))+(1:Len(x))),[x y]), [],2), (x+1):length(Len),'un',0), 1:length(Len), 'un',0);
         ClassBinary =     [ClassBinary{:}];
