@@ -49,12 +49,16 @@ function Rate = HMM_Classification(Data, varargin)
 %% =================Set the classification paramters ======================   
     if nargin < 3
     CV.nfolds = 5; CV.runs = 10;
+    else
+        CV = varargin{2};
     end
     
     if nargin < 2
            % no class name class name is provided, then label the class 
            % sequentially, 1, 2, ... N
             Class_name = arrayfun(@num2str, 1:length(Data),'un',0);
+    else
+        Class_name = varargin{1};
     end
     
 % Use the HMM configuration provided in the input
