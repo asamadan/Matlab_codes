@@ -153,7 +153,7 @@ for ii = 1:CV.runs % CVruns
         % Get the binary classification from the maximum liklihood
         % results for K class (FTest): ClassBinary
         [~,ClassBinary] = arrayfun(@(x) arrayfun(@(y) max(FTest(setxor(sum(Len(1:x-1))+(1:Len(x)), ...
-                          sum(Len(1:y-1))+(1:Len(x))),[x y]), [],2), (x+1):length(Len),'un',0), 1:length(Len), 'un',0);
+                          sum(Len(1:y-1))+(1:Len(y))),[x y]), [],2), (x+1):length(Len),'un',0), 1:length(Len), 'un',0);
         ClassBinary =     [ClassBinary{:}];
         
         % compute the binary classification rates.
