@@ -15,15 +15,15 @@ function Rate = HMM_Classification(Data, varargin)
 
 % =========================================================================
 % Inputs:
-        % Data: a cell array of length N, in which each cell carries class-specific
-        % samples for class n = 1, ..., N.
-        
-        % Class_name: a cell array with each entry carrying the name of a class
-        
-        % CV: cross-validation parameters:
-        %     1) CV.nfolds: n-fold cross-validation (CV), default = 5
-        %     2) CV.runs:   repeats CV 'runs' times, default = 10
-        
+% Data: a cell array of length N, in which each cell carries class-specific
+% samples for class n = 1, ..., N.
+
+% Class_name: a cell array with each entry carrying the name of a class
+
+% CV: cross-validation parameters:
+%     1) CV.nfolds: n-fold cross-validation (CV), default = 5
+%     2) CV.runs:   repeats CV 'runs' times, default = 10
+
 % The following HMM configuration can be set:
 % 1) HMM.s:        number of states,
 % 2) HMM.m:        number of Guassian mixtures per state
@@ -40,49 +40,49 @@ function Rate = HMM_Classification(Data, varargin)
 
 % =========================================================================
 % Output:
-    % Rate: a structure carrying mean+/-StD k-class and binary classification
-    %       rates out of cross-validation tests
+% Rate: a structure carrying mean+/-StD k-class and binary classification
+%       rates out of cross-validation tests
 
 %% Author: Ali Samadani
 % Date:   May 31st, 2016
 
-%% =================Set the classification paramters ======================   
-    if nargin < 3
+%% =================Set the classification paramters ======================
+if nargin < 3
     CV.nfolds = 5; CV.runs = 10;
-    else
-        CV = varargin{2};
-    end
-    
-    if nargin < 2
-           % no class name class name is provided, then label the class 
-           % sequentially, 1, 2, ... N
-            Class_name = arrayfun(@num2str, 1:length(Data),'un',0);
-    else
-        Class_name = varargin{1};
-    end
-    
+else
+    CV = varargin{2};
+end
+
+if nargin < 2
+    % no class name class name is provided, then label the class
+    % sequentially, 1, 2, ... N
+    Class_name = arrayfun(@num2str, 1:length(Data),'un',0);
+else
+    Class_name = varargin{1};
+end
+
 % Use the HMM configuration provided in the input
-    try HMM = varargin{4};
-    catch, HMM = [];
-    end
+try HMM = varargin{4};
+catch, HMM = [];
+end
 
 % Set the remaining HMM parameters to default
-    HMM = HMM_options(HMM);
-    
-% Setting the class names and the name for binary classification cases 
+HMM = HMM_options(HMM);
+
+% Setting the class names and the name for binary classification cases
 Names = arrayfun(@(x) arrayfun(@(y) [Class_name{x} 'vs' Class_name{y}], ...
     (x+1):length(Class_name),'un',0),1:length(Class_name),'un',0);
 Names = [{[num2str(length(Class_name)) 'Class']} Names{:}];
 
 
-% Devide class-specific samples into train and test samples for n-fold CV
-cv = cellfun(@(y) crossvalind('kfold',length(y), CV.nfolds),Data, 'un',0);
 
 %% ===================== Cross-validation =================================
 for ii = 1:CV.runs % CVruns
     % initialize Testaccuracy that carries fold-specific classification
     % performance
     Testaccuracy = zeros(CV.nfolds, length(Names));
+    % Devide class-specific samples into train and test samples for n-fold CV
+    cv = cellfun(@(y) crossvalind('kfold',length(y), CV.nfolds),Data, 'un',0);
     
     for i = 1:CV.nfolds % n-folds CV
         % define the labels
@@ -99,33 +99,33 @@ for ii = 1:CV.runs % CVruns
         % define test labels
         TestLabel = cell2mat(cellfun(@(x,y) x(y), Labels, testind,'un',0));
         
-        % =========================HMM training============================  
+        % =========================HMM training============================
         e = 0.02;% this paramater is used to fatten the output Gaussian. This helps
-
+        
         % if HMM.AIC is set,  different HMM configurations in terms of the number of
         % states are tested and the configuration that minimizes AIC on
         % the training data is selected
         if HMM.AIC
-        m = HMM.m; % reassigning m, and topology to separate variables to avoid 
-        Transition = HMM.topology;
-
-        parfor state =s
+            m = HMM.m; % reassigning m, and topology to separate variables to avoid
+            Transition = HMM.topology;
             
-            [Model{state-1}] = cellfun(@(x,y) HMMTrain(x(y), state, m,e, Transition), Data, trainind,'un',0); 
+            parfor state =s
+                
+                [Model{state-1}] = cellfun(@(x,y) HMMTrain(x(y), state, m,e, Transition), Data, trainind,'un',0);
+                
+            end
             
-        end
-        
-        % compute  AIC
-        AIC = cell2mat(cellfun(@(x) cellfun(@(y) y.AIC, x)', Model,'un',0));
-        [~,AICmodel{Type}{ii,i}] = min(AIC,[],2);
-        
-        % return what model ended up being used based onAIC for each
-        % class
-        AICSelectedStates{Type}{ii,i} = arrayfun(@(x) s(x), AICmodel{Type}{ii,i});
-        
-        % Select a model with the min AIC
-        MODEL = arrayfun(@(x) Model{AICmodel{Type}{ii,i}(x)}{x},1:size(AIC,1),'un',0);
-        
+            % compute  AIC
+            AIC = cell2mat(cellfun(@(x) cellfun(@(y) y.AIC, x)', Model,'un',0));
+            [~,AICmodel{ii,i}] = min(AIC,[],2);
+            
+            % return what model ended up being used based onAIC for each
+            % class
+            AICSelectedStates{ii,i} = arrayfun(@(x) s(x), AICmodel{ii,i});
+            
+            % Select a model with the min AIC
+            MODEL = arrayfun(@(x) Model{AICmodel{ii,i}(x)}{x},1:size(AIC,1),'un',0);
+            
         else
             MODEL = cellfun(@(x,y) HMMTrain(x(y), HMM.s, HMM.m, e, HMM.topology), Data, trainind,'un',0); % HMM for class1
         end
@@ -153,7 +153,7 @@ for ii = 1:CV.runs % CVruns
         % Get the binary classification from the maximum liklihood
         % results for K class (FTest): ClassBinary
         [~,ClassBinary] = arrayfun(@(x) arrayfun(@(y) max(FTest(setxor(sum(Len(1:x-1))+(1:Len(x)), ...
-                          sum(Len(1:y-1))+(1:Len(y))),[x y]), [],2), (x+1):length(Len),'un',0), 1:length(Len), 'un',0);
+            sum(Len(1:y-1))+(1:Len(y))),[x y]), [],2), (x+1):length(Len),'un',0), 1:length(Len), 'un',0);
         ClassBinary =     [ClassBinary{:}];
         
         % compute the binary classification rates.
@@ -165,7 +165,7 @@ for ii = 1:CV.runs % CVruns
     Accuracy.Mean(ii,:) = mean(Testaccuracy,1);
     
     % The run-specific variances will be used to compute pooled standard deviation
-    Accuracy.Var(ii,:)  = var(Testaccuracy,[],1); 
+    Accuracy.Var(ii,:)  = var(Testaccuracy,[],1);
 end
 
 % Average performance over the runs of cv
@@ -175,7 +175,7 @@ Rate.StD = sqrt(mean(Accuracy.Var,1));
 % We will report mean ± pooled_standarddeviation from the above CV
 arrayfun(@(x) disp([Names{x} ' Accuracy = ' sprintf('%.2f',Rate.Mean(x)) char(177) sprintf('%.2f',Rate.StD(x))]), 1:length(Rate.Mean))
 
-end 
+end
 
 function HMM = HMM_options(HMM)
 % This function sets the HMM parameters if not available to default
@@ -184,7 +184,7 @@ function HMM = HMM_options(HMM)
 % 2) HMM.m:        number of Guassian mixtures per state, default = 3
 % 3) HMM.topology: HMM topology: a) left to right ('L2R') [default] or
 %                                b) fully connected ('full')
-% 4) HMM.prior:    initial state probabilities, 
+% 4) HMM.prior:    initial state probabilities,
 %                  default = state 1 is initial state
 % 5) HMM.cov:      Gaussian covariance matrices: a) diagonal ('diag') [default] or
 %                                                b) full     ('full')
@@ -199,7 +199,7 @@ if ~isfield(HMM, 'm'),          HMM.m = 3;                        end
 if ~isfield(HMM, 'topology'),   HMM.topology = 'L2R';             end
 if ~isfield(HMM, 'prior'),      HMM.prior = [1 zeros(1,HMM.s-1)]; end
 if ~isfield(HMM, 'cov'),        HMM.cov = 'diag';                 end
-if ~isfield(HMM, 'AIC'),        HMM.AIC = 0;   
+if ~isfield(HMM, 'AIC'),        HMM.AIC = 0;
 elseif length(HMM.s) == 1,      HMM.s = 2:10;                     end
 
 end
